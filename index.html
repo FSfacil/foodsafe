@@ -1,0 +1,250 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#2F7A4D"><meta name="description" content="Conheça o FoodSafe Fácil: informação acessível para entender documentos, organizar pendências e encontrar apoio especializado para seu negócio de alimentos."><title>FoodSafe Fácil — Entenda seus documentos e encontre apoio</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet"><style>
+
+:root{
+  --bg:#F2F6F1;            
+  --bg-panel:#FFFFFF;      
+  --ink:#1E2B24;           
+  --ink-soft:#4B5A52;      
+  --steel:#7C8A82;         
+  --steel-light:#DCE3DE;   
+  --approve:#2F7A4D;       
+  --approve-light:#E4F1E8; 
+  --pending:#C0562A;       
+  --pending-light:#F7E7DE; 
+  --line:#CBD4CD;          
+  --radius:10px;           
+}
+*{box-sizing:border-box;} 
+html{scroll-behavior:smooth;} 
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'IBM Plex Sans',sans-serif;
+  line-height:1.5;
+}
+h1,h2,h3,.display{ font-family:'Space Grotesk',sans-serif; letter-spacing:-0.01em; }
+.mono{ font-family:'IBM Plex Mono',monospace; letter-spacing:0.02em; } 
+a{color:inherit;}
+img,svg{display:block;max-width:100%;}
+button{font-family:inherit;cursor:pointer;}
+
+
+.tile-bg{
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:34px 34px;
+  opacity:0.35;
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+
+header{ position:relative; overflow:hidden; padding:48px 24px 90px; background:var(--bg); }
+
+
+.brandbar{ display:flex; align-items:center; justify-content:space-between; max-width:1080px; margin:0 auto 60px; position:relative; z-index:2; }
+.brand{ display:flex; align-items:center; gap:10px; font-weight:600; font-size:15px; }
+.brand .dot{ width:9px;height:9px;border-radius:50%; background:var(--approve); box-shadow:0 0 0 3px var(--approve-light); } 
+
+
+nav a.navlink{ font-size:13px; color:var(--ink-soft); text-decoration:none; margin-left:22px; }
+nav a.navlink:hover{color:var(--ink);}
+
+.hero{ max-width:1080px; margin:0 auto; position:relative; z-index:2; display:grid; grid-template-columns:1.15fr 0.85fr; gap:48px; align-items:center; }
+.eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--approve); text-transform:uppercase; letter-spacing:0.12em; margin:0 0 16px; }
+.hero h1{ font-size:clamp(32px,4.2vw,50px); font-weight:700; line-height:1.05; margin:0 0 20px; }
+.hero h1 em{ font-style:normal; color:var(--approve); }
+.hero p{ font-size:16px; color:var(--ink-soft); max-width:480px; margin:0 0 30px; }
+.cta-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.btn{ border:none; border-radius:999px; padding:14px 26px; font-size:14.5px; font-weight:600; transition:transform .15s ease, box-shadow .15s ease; }
+.btn:focus-visible{outline:3px solid var(--approve);outline-offset:3px;}
+.btn-primary{ background:var(--ink); color:var(--bg); }
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(30,43,36,0.22);}
+.btn-ghost{ background:transparent; color:var(--ink); border:1.5px solid var(--line); }
+.btn-ghost:hover{border-color:var(--ink);}
+.btn-small{padding:10px 18px;font-size:13px;border-radius:999px;}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+
+.stampwrap{ position:relative; display:flex; align-items:center; justify-content:center; height:260px; }
+.dossie{ width:220px; height:160px; background:var(--bg-panel); border:1.5px solid var(--line); border-radius:8px; box-shadow:0 20px 40px -14px rgba(30,43,36,0.25); position:relative; padding:18px 20px; transform:rotate(-2deg); }
+.dossie .tab{ position:absolute; top:-14px;left:20px; background:var(--steel-light); border:1.5px solid var(--line); border-bottom:none; border-radius:6px 6px 0 0; padding:4px 12px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ink-soft); }
+.dossie .line{ height:7px; background:var(--steel-light); border-radius:3px; margin-bottom:9px; }
+.dossie .line:nth-child(2){width:85%;}
+.dossie .line:nth-child(3){width:95%;}
+.dossie .line:nth-child(4){width:60%;}
+
+#stamp{ position:absolute; width:145px;height:145px; right:-10px; bottom:-18px; opacity:0; transform:rotate(-18deg) scale(1.4); transition:opacity .5s ease, transform .5s cubic-bezier(.2,1.6,.4,1); }
+#stamp.show{ opacity:1; transform:rotate(-12deg) scale(1); }
+
+
+section{ max-width:1080px; margin:0 auto; padding:80px 24px; }
+.section-head{max-width:620px;margin-bottom:40px;}
+.section-head .eyebrow{margin-bottom:12px;}
+.section-head h2{ font-size:clamp(26px,3vw,34px); margin:0 0 12px; }
+.section-head p{color:var(--ink-soft);margin:0;font-size:15.5px;}
+
+
+.planos-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; }
+.plano-card{ background:var(--bg-panel); border:1.5px solid var(--line); border-radius:14px; padding:26px; display:flex; flex-direction:column; }
+.plano-card.destaque{ border-color:var(--approve); box-shadow:0 14px 30px -12px rgba(47,122,77,0.28); }
+.plano-selo{ align-self:flex-start; font-family:'IBM Plex Mono',monospace; font-size:10.5px; background:var(--approve); color:#fff; padding:3px 9px; border-radius:999px; margin-bottom:14px; }
+.plano-nome{ font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:600; margin:0 0 6px; }
+.plano-preco{ font-size:24px; font-weight:700; margin:0 0 4px; }
+.plano-preco span{font-size:13px;font-weight:500;color:var(--ink-soft);}
+.plano-desc{ color:var(--ink-soft); font-size:13.5px; margin:0 0 18px; flex:1; }
+.plano-botoes{display:flex;flex-direction:column;gap:8px;}
+
+
+.quiz-card{ background:var(--bg-panel); border:1.5px solid var(--line); border-radius:16px; padding:40px; position:relative; }
+.progress-row{ display:flex; gap:8px; margin-bottom:30px; } 
+.progress-dot{ flex:1; height:6px; border-radius:3px; background:var(--steel-light); }
+.progress-dot.done{background:var(--approve);}     
+.progress-dot.current{background:var(--steel);}    
+.q-code{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--steel); margin-bottom:8px; }
+.q-title{ font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:600; margin:0 0 24px; max-width:560px; }
+.options{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-bottom:28px; }
+.opt{ border:1.5px solid var(--line); background:var(--bg); border-radius:10px; padding:16px 18px; text-align:left; font-size:14.5px; font-weight:500; color:var(--ink); transition:border-color .15s, background .15s; display:flex; align-items:center; gap:12px; }
+.opt .box{ width:16px;height:16px; border:1.5px solid var(--steel); border-radius:4px; flex:none; position:relative; } 
+.opt.selected{border-color:var(--approve);background:var(--approve-light);}
+.opt.selected .box{background:var(--approve);border-color:var(--approve);}
+.opt.selected .box::after{ content:""; position:absolute;left:4px;top:1px; width:4px;height:8px; border:solid white; border-width:0 2px 2px 0; transform:rotate(40deg); } 
+.opt:hover{border-color:var(--ink);}
+.opt:focus-visible{outline:3px solid var(--approve);outline-offset:2px;}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;}
+.quiz-nav .hint{font-size:12.5px;color:var(--steel);}
+
+
+#resultado{display:none;}       
+#resultado.show{display:block;} 
+.stamp-banner{ display:flex; align-items:center; gap:16px; background:var(--approve-light); border:1.5px solid var(--approve); border-radius:12px; padding:20px 24px; margin-bottom:40px; }
+.stamp-banner svg{width:44px;height:44px;flex:none;} 
+.stamp-banner strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:17px;}
+.stamp-banner span{color:var(--ink-soft);font-size:14px;}
+.tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:28px; border-bottom:1.5px solid var(--line); }
+.tab-btn{ background:transparent; border:none; padding:12px 6px; margin-right:22px; font-size:14px; font-weight:500; color:var(--ink-soft); border-bottom:2.5px solid transparent; display:flex; align-items:center; gap:8px; }
+.tab-btn .code{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);}
+.tab-btn.active{color:var(--ink);border-bottom-color:var(--approve);} 
+.tab-btn .badge{ font-family:'IBM Plex Mono',monospace; font-size:9.5px; background:var(--pending); color:white; padding:2px 6px; border-radius:999px; text-transform:uppercase; }
+.tab-btn:focus-visible{outline:3px solid var(--approve);outline-offset:2px;}
+.panel{display:none;}                 
+.panel.active{display:block;animation:fadein .25s ease;} 
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.panel-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:32px; }
+.panel h3{font-size:22px;margin:0 0 6px;}
+.panel .desc{color:var(--ink-soft);font-size:15px;margin:0 0 20px;}
+.priority-tag{ display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; padding:5px 10px; border-radius:999px; margin-bottom:16px; }
+.priority-tag.high{background:var(--pending-light);color:var(--pending);}
+.priority-tag.base{background:var(--steel-light);color:var(--ink-soft);}
+.checklist{list-style:none;margin:0 0 22px;padding:0;}
+.checklist li{ display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); font-size:14.5px; }
+.checklist li::before{ content:""; width:15px;height:15px;flex:none;margin-top:2px; border:1.5px solid var(--steel); border-radius:4px; } 
+.side-card{ background:var(--bg-panel); border:1.5px solid var(--line); border-radius:12px; padding:22px; align-self:start; }
+.side-card h4{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; text-transform:uppercase; color:var(--steel); margin:0 0 14px; letter-spacing:0.08em; }
+.freq-row{display:flex;justify-content:space-between;font-size:13.5px;padding:9px 0;border-bottom:1px dashed var(--line);}
+.freq-row span:first-child{color:var(--ink-soft);}
+.freq-row span:last-child{font-weight:600;text-align:right;}
+
+
+.form-card{ background:var(--bg-panel); border:1.5px solid var(--line); border-radius:16px; padding:40px; }
+.form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px; }
+.field{display:flex;flex-direction:column;gap:6px;}
+.field.full{grid-column:1 / -1;}
+.field label{font-size:13px;font-weight:600;color:var(--ink);}
+.field small{font-size:12px;color:var(--steel);}
+.field input, .field select, .field textarea{
+  border:1.5px solid var(--line); border-radius:8px; padding:11px 13px;
+  font-family:'IBM Plex Sans',sans-serif; font-size:14px; color:var(--ink); background:var(--bg);
+}
+.field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--approve);border-color:var(--approve);}
+.radio-group{display:flex;gap:14px;flex-wrap:wrap;}
+.radio-opt{ display:flex; align-items:center; gap:8px; border:1.5px solid var(--line); border-radius:8px; padding:10px 14px; font-size:13.5px; cursor:pointer; }
+.radio-opt input{margin:0;}
+
+#blocoRevisao{ display:none; background:var(--steel-light); border-radius:10px; padding:18px; margin-top:6px; }
+#blocoRevisao.show{display:block;}
+#categoriaHint{ font-size:13px; color:var(--approve); background:var(--approve-light); border-radius:8px; padding:10px 12px; margin-top:6px; display:none; }
+#categoriaHint.show{display:block;}
+.form-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:24px;}
+#formMsg{font-size:13.5px;color:var(--approve);}
+
+
+.agenda-card{ background:var(--bg-panel); border:1.5px solid var(--line); border-radius:16px; padding:32px; display:grid; grid-template-columns:1fr 1.4fr; gap:30px; align-items:center; }
+.agenda-card iframe{ width:100%; height:420px; border:1.5px solid var(--line); border-radius:10px; }
+.agenda-steps{list-style:none;margin:0;padding:0;}
+.agenda-steps li{ display:flex; gap:12px; padding:12px 0; border-bottom:1px dashed var(--line); font-size:14px; }
+.agenda-steps li .n{ font-family:'IBM Plex Mono',monospace; color:var(--approve); font-weight:600; flex:none; }
+
+footer{ border-top:1.5px solid var(--line); padding:36px 24px; text-align:center; color:var(--steel); font-size:12.5px; }
+
+@media(max-width:760px){
+  .hero{grid-template-columns:1fr;}
+  .stampwrap{height:200px;}
+  .panel-grid{grid-template-columns:1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .agenda-card{grid-template-columns:1fr;}
+  nav{display:none;} 
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important;} }
+
+html{scroll-padding-top:24px}a.btn{display:inline-block;text-decoration:none;text-align:center}a:focus-visible,summary:focus-visible{outline:3px solid var(--approve);outline-offset:4px}.brand{text-decoration:none}.skip{position:absolute;top:-80px;left:12px;background:white;padding:12px;z-index:10}.skip:focus{top:12px}.hero .caption{font-size:12px;margin:16px 0 0}.document-label{font-size:12px;color:var(--ink-soft);margin-top:15px}.journey-label{position:absolute;bottom:18px;right:0;background:var(--approve-light);border:1px solid var(--approve);padding:12px 18px;border-radius:8px;font-size:12px;color:var(--approve);max-width:230px}.intro-strip{border-block:1px solid var(--line);padding:22px 24px;text-align:center;font-size:14px}.intro-strip p{margin:0}.intro-strip small{color:var(--ink-soft)}.journey-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}.journey-step{border-top:2px solid var(--line);padding-top:20px}.journey-step .mono{color:var(--approve);font-size:13px}.journey-step h3{font-size:20px}.journey-step p{font-size:15px;color:var(--ink-soft)}.plano-card h3{margin-top:8px}.service-label{font-size:11px;color:var(--approve);font-weight:600}.plano-card p{margin-bottom:0}.demo-section{background:#e8eee7;border-block:1px solid var(--line)}.demo-section section{padding-top:64px;padding-bottom:64px}.demo-note{font-size:13px;color:var(--ink-soft);margin-top:20px}.quiz-nav{gap:14px;flex-wrap:wrap}.quiz-nav .hint{color:var(--ink-soft)}.q-code{color:var(--ink-soft)}.quiz-card .q-title:focus{outline:none}.result-box{border:1px solid var(--approve);background:var(--approve-light);border-radius:12px;padding:28px;margin-top:28px}.result-box h3{margin:0 0 12px}.result-box p{font-size:15px}.result-box .btn{margin-top:8px}#resultado[hidden]{display:none}#resultado{display:block}.participation{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}.participation .section-head{margin-bottom:0}.participation-card{background:white;border:1.5px solid var(--line);border-radius:14px;padding:32px}.participation-card h3{font-size:23px}.participation-card p{color:var(--ink-soft);font-size:15px}.future-form{border-top:1px solid var(--line);padding-top:16px;font-size:13px;color:var(--ink-soft)}.faq{padding-top:20px}.faq details{border-bottom:1px solid var(--line);padding:18px 0}.faq summary{cursor:pointer;font-weight:600}.faq details p{max-width:800px;color:var(--ink-soft);font-size:15px}footer{color:var(--ink-soft)}.no-js{padding:16px;background:var(--pending-light)}@media(max-width:760px){header{padding:24px 20px 48px}.brandbar{margin-bottom:38px;gap:16px;align-items:flex-start;flex-direction:column}nav{display:flex;gap:16px;flex-wrap:wrap}nav a.navlink{margin:0;font-size:12px}.hero{gap:24px}.hero h1{font-size:36px}.stampwrap{height:225px}.journey-label{right:10px;bottom:0}.journey-grid,.participation{grid-template-columns:1fr}.journey-grid{gap:24px}section{padding:48px 20px}.quiz-card{padding:24px 20px}.options{grid-template-columns:1fr}.q-title{font-size:20px}.quiz-nav .hint{width:100%;order:3}.participation-card{padding:24px}.result-box{padding:22px}.btn{padding:12px 20px}.planos-grid{grid-template-columns:1fr}.demo-section section{padding:48px 20px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style></head><body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<header id="inicio"><div class="tile-bg" aria-hidden="true"></div>
+ <div class="brandbar"><a class="brand" href="#inicio"><span class="dot" aria-hidden="true"></span> FOODSAFE FÁCIL</a><nav aria-label="Menu principal"><a class="navlink" href="#proposta">A proposta</a><a class="navlink" href="#servicos">Serviços previstos</a><a class="navlink" href="#demonstracao">Veja um exemplo</a><a class="navlink" href="#participar">Participação</a></nav></div>
+ <div class="hero"><div><p class="eyebrow">Clareza para quem empreende com alimentos</p><h1>Entenda seus documentos.<br><em>Encontre o próximo passo.</em></h1><p>O FoodSafe Fácil está sendo desenvolvido para ajudar você a organizar pendências de documentação e encontrar apoio especializado, com linguagem simples e atenção à realidade do seu negócio.</p><div class="cta-row"><a class="btn btn-primary" href="#demonstracao">Explore a proposta</a><a class="btn btn-ghost" href="#participar">Quero saber como participar</a></div><p class="caption">Projeto em desenvolvimento · Serviços ainda não disponíveis para contratação</p></div>
+ <div class="stampwrap" aria-label="Ilustração de uma pasta de documentos em organização"><div class="dossie"><div class="tab mono">MEU EMPREENDIMENTO</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="document-label">Documentos · dúvidas · próximos passos</div></div><div class="journey-label"><strong>Um passo de cada vez.</strong><br>Entender, organizar e buscar apoio.</div></div></div>
+</header>
+<main id="conteudo"><div class="intro-strip"><p>Para pequenos e médios negócios do setor de alimentos.</p><small>Prioridade de validação: empreendimentos liderados por mulheres.</small></div>
+<section id="proposta"><div class="section-head"><p class="eyebrow">A proposta</p><h2>Uma jornada mais clara para resolver pendências.</h2><p>Da dúvida sobre um documento à busca por um profissional, queremos ajudar você a compreender as etapas e escolher como seguir.</p></div><div class="journey-grid"><article class="journey-step"><span class="mono">01 / ENTENDER</span><h3>Conhecer o seu contexto</h3><p>Considerar a atividade, a localidade e as dúvidas do empreendimento para orientar sobre documentos e etapas aplicáveis.</p></article><article class="journey-step"><span class="mono">02 / ORGANIZAR</span><h3>Dar clareza às pendências</h3><p>Reunir informações e identificar o que precisa de elaboração, revisão ou orientação especializada.</p></article><article class="journey-step"><span class="mono">03 / ENCAMINHAR</span><h3>Encontrar apoio técnico</h3><p>Conectar a necessidade do negócio a profissionais com competência compatível com o serviço.</p></article></div></section>
+<section id="servicos"><div class="section-head"><p class="eyebrow">Serviços previstos</p><h2>Apoio em diferentes momentos do seu negócio.</h2><p>Estamos definindo formatos, entregas e valores. A proposta combina orientação inicial gratuita com serviços especializados pagos.</p></div><div class="planos-grid"><article class="plano-card"><span class="service-label mono">GRATUITO PREVISTO</span><h3 class="plano-nome">Conteúdo e orientação inicial</h3><p class="plano-desc">Explicações acessíveis sobre documentos, termos técnicos e boas práticas para ajudar você a compreender as primeiras etapas.</p></article><article class="plano-card destaque"><span class="service-label mono">SERVIÇO PAGO PREVISTO</span><h3 class="plano-nome">Elaboração de documentos</h3><p class="plano-desc">Documentos personalizados a partir das informações do estabelecimento, com apoio técnico e entregas claramente definidas.</p></article><article class="plano-card"><span class="service-label mono">SERVIÇO PAGO PREVISTO</span><h3 class="plano-nome">Revisão e atualização</h3><p class="plano-desc">Análise de documentos existentes e atualização do material conforme as necessidades identificadas no negócio.</p></article><article class="plano-card"><span class="service-label mono">CONEXÃO PREVISTA</span><h3 class="plano-nome">Profissionais de consultoria</h3><p class="plano-desc">Encaminhamento de demandas para apoio especializado. As condições de contratação e intermediação ainda serão testadas.</p></article></div></section>
+<div class="demo-section"><section id="demonstracao"><div class="section-head"><p class="eyebrow">Demonstração interativa</p><h2>Da sua dúvida a um possível encaminhamento.</h2><p>Explore como uma necessidade poderia ser organizada. Este exemplo não analisa documentos nem determina exigências para o seu estabelecimento.</p></div><noscript><p class="no-js">Ative o JavaScript para explorar o exemplo. A jornada proposta é entender o contexto, organizar a demanda e buscar apoio técnico.</p></noscript><div class="quiz-card" id="quiz" hidden><div class="progress-row" id="progressRow" aria-hidden="true"></div><p class="q-code mono" id="qCode"></p><h3 class="q-title" id="qTitle" tabindex="-1"></h3><div class="options" id="qOptions" role="group" aria-labelledby="qTitle"></div><div class="quiz-nav"><button class="btn btn-ghost" id="btnBack" type="button">Voltar</button><span class="hint" id="qHint" aria-live="polite">Selecione uma opção.</span><button class="btn btn-primary" id="btnNext" type="button" disabled>Continuar</button></div></div><div class="result-box" id="resultado" hidden><p class="eyebrow">Exemplo de encaminhamento</p><h3 id="resultTitle" tabindex="-1"></h3><p id="resultSummary"></p><ol id="resultSteps"></ol><p class="demo-note">A definição dos documentos e do serviço dependerá de uma análise técnica do empreendimento. Esta demonstração não comprova adequação sanitária.</p><div class="cta-row"><a class="btn btn-primary" href="#participar">Sobre a participação no projeto</a><button class="btn btn-ghost" id="btnRestart" type="button">Explorar outro exemplo</button></div></div><p class="demo-note">As escolhas ficam somente nesta página enquanto ela estiver aberta. Não são enviadas nem registradas pela equipe.</p></section></div>
+<section id="participar" class="participation"><div class="section-head"><p class="eyebrow">Construção com empreendedores</p><h2>Sua experiência ajuda a definir os próximos passos.</h2><p>Queremos entender as dúvidas de quem empreende com alimentos e testar se a proposta faz sentido na prática. O primeiro grupo de participantes ainda será definido pela equipe.</p></div><div class="participation-card"><span class="service-label mono">PARTICIPAÇÃO EM BREVE</span><h3>Estamos preparando nosso canal de contato.</h3><p>Quando as inscrições abrirem, você poderá registrar seu interesse e contar qual é a principal necessidade do seu negócio.</p><div class="future-form">As inscrições ainda não estão abertas. Esta versão não coleta nome, contato ou documentos. Os convites para testes dependerão da capacidade de atendimento da equipe.</div></div></section>
+<section class="faq" id="duvidas"><div class="section-head"><p class="eyebrow">Dúvidas frequentes</p><h2>O que esperar desta primeira etapa?</h2></div><details><summary>O FoodSafe Fácil já está prestando serviços?</summary><p>Ainda não. Esta página apresenta a proposta e uma demonstração da jornada. A elaboração e revisão de documentos e a conexão com consultores são serviços previstos para etapas futuras.</p></details><details><summary>A demonstração fornece um diagnóstico do meu negócio?</summary><p>Não. Ela apenas ilustra um possível encaminhamento a partir da necessidade escolhida. Não verifica documentos, condições do estabelecimento ou atendimento a requisitos.</p></details><details><summary>Haverá cobrança para participar?</summary><p>A proposta prevê conteúdo educativo e orientação inicial básica gratuitos. Os preços dos serviços especializados e as condições do piloto ainda serão definidos e testados.</p></details><details><summary>Sou consultor. Posso fazer parte?</summary><p>A plataforma futura prevê uma rede de profissionais para atender demandas de empreendedores. Os critérios de participação e as condições de intermediação ainda serão definidos.</p></details><details><summary>Quem poderá participar dos primeiros testes?</summary><p>A equipe ainda definirá uma categoria e uma localidade para concentrar a primeira validação, com prioridade para empreendimentos liderados por mulheres.</p></details></section></main><footer><strong>FoodSafe Fácil</strong><br>Informação acessível e caminhos para buscar apoio especializado.<br>Projeto em desenvolvimento · 2026</footer>
+<script>
+'use strict';
+const QUESTIONS = [
+ {title:'Qual situação você gostaria de explorar?', options:['Preciso entender por onde começar','Tenho documentos que podem estar desatualizados','Preciso de ajuda para elaborar documentos','Quero conversar com um profissional']},
+ {title:'Como estão as informações do empreendimento?', options:['Já tenho materiais e informações organizados','Tenho parte das informações, mas preciso organizar','Ainda não sei o que reunir']},
+ {title:'Que tipo de apoio faria sentido neste exemplo?', options:['Explicações para entender os próximos passos','Apoio técnico para analisar minha necessidade','Ainda preciso conhecer as opções']}
+];
+const PATHS = [
+ {title:'Entender as primeiras etapas',text:'O ponto de partida seria conhecer a atividade e a localidade do empreendimento para esclarecer suas dúvidas.',step:'Buscar orientação inicial sobre o contexto do negócio e as etapas a compreender.'},
+ {title:'Organizar uma demanda de revisão',text:'Neste cenário, a necessidade relatada é revisar documentos existentes e entender se precisam de atualização.',step:'Buscar um profissional que avalie os documentos e defina o escopo de uma possível revisão.'},
+ {title:'Organizar uma demanda de elaboração',text:'Neste cenário, seria necessário compreender o empreendimento antes de definir quais documentos elaborar.',step:'Solicitar análise técnica para definir os documentos, as informações necessárias e as entregas.'},
+ {title:'Preparar uma conversa com um profissional',text:'Neste cenário, a primeira conversa ajudaria a esclarecer a demanda e o tipo de apoio necessário.',step:'Buscar um profissional com competência compatível com a necessidade relatada.'}
+];
+let step=0;
+const answers=[null,null,null];
+const quiz=document.getElementById('quiz');
+const title=document.getElementById('qTitle');
+const back=document.getElementById('btnBack');
+const next=document.getElementById('btnNext');
+const result=document.getElementById('resultado');
+quiz.hidden=false;
+function render(focus=false){
+ document.getElementById('qCode').textContent=`ETAPA ${step+1} DE ${QUESTIONS.length}`;
+ title.textContent=QUESTIONS[step].title;
+ const options=document.getElementById('qOptions');options.replaceChildren();
+ QUESTIONS[step].options.forEach((label,index)=>{
+  const button=document.createElement('button');button.type='button';button.className='opt'+(answers[step]===index?' selected':'');button.setAttribute('aria-pressed',String(answers[step]===index));
+  const box=document.createElement('span');box.className='box';box.setAttribute('aria-hidden','true');const text=document.createElement('span');text.textContent=label;button.append(box,text);
+  button.addEventListener('click',()=>{answers[step]=index;options.querySelectorAll('button').forEach((b,i)=>{b.classList.toggle('selected',i===index);b.setAttribute('aria-pressed',String(i===index));});next.disabled=false;document.getElementById('qHint').textContent='Opção selecionada. Continue quando quiser.';});options.append(button);
+ });
+ back.disabled=step===0;next.disabled=answers[step]===null;next.textContent=step===QUESTIONS.length-1?'Ver exemplo':'Continuar';document.getElementById('qHint').textContent=answers[step]===null?'Selecione uma opção.':'Você pode manter ou alterar sua escolha.';
+ const progress=document.getElementById('progressRow');progress.replaceChildren();QUESTIONS.forEach((_,i)=>{const dot=document.createElement('span');dot.className='progress-dot'+(i<step?' done':i===step?' current':'');progress.append(dot);});if(focus)title.focus();
+}
+back.addEventListener('click',()=>{if(step>0){step--;render(true);}});
+next.addEventListener('click',()=>{if(answers[step]===null)return;if(step<QUESTIONS.length-1){step++;render(true);return;}showResult();});
+function showResult(){
+ if(answers.some(a=>a===null))return;
+ const path=PATHS[answers[0]];document.getElementById('resultTitle').textContent=path.title;document.getElementById('resultSummary').textContent=path.text;
+ const preparation=['Reunir os materiais já organizados e registrar as dúvidas que precisam de esclarecimento.','Organizar os materiais disponíveis e identificar quais informações ainda precisam ser reunidas.','Começar por uma conversa sobre o negócio para entender quais informações reunir.'][answers[1]];
+ const support=['Começar por conteúdo educativo e orientação inicial para compreender as opções.','Preparar uma demanda para análise técnica, com informações sobre a atividade e a localidade.','Conhecer os tipos de apoio e seus escopos antes de escolher um serviço.'][answers[2]];
+ const list=document.getElementById('resultSteps');list.replaceChildren();[preparation,support,path.step].forEach(text=>{const item=document.createElement('li');item.textContent=text;list.append(item);});quiz.hidden=true;result.hidden=false;document.getElementById('resultTitle').focus();
+}
+document.getElementById('btnRestart').addEventListener('click',()=>{answers.fill(null);step=0;result.hidden=true;quiz.hidden=false;render(true);});render();
+</script></body></html>
